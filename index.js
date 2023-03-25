@@ -70,9 +70,9 @@ app.use("/users",require("./routes/userRoutes"));
 
 app.use("/posts",require("./routes/postRoutes"));
 
-// app.use("*",(req,res)=>{
-//     res.status(404).json({message:"error 404"})
-// })
+app.use("*",(req,res)=>{
+    res.status(404).json({message:"error 404"})
+})
 
 
 
