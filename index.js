@@ -10,6 +10,8 @@ const morgan = require("morgan");
 const connectDb = require("./config/dbConn");
 const { register } = require("./controller/auth");
 const corsOptions = require("./config/corsOptions");
+const { users } = require("./data");
+const Users = require("./models/Users");
 const PORT = process.env.PORT || 3500;
 
 connectDb();
@@ -56,9 +58,13 @@ app.post("/auth/register",upload.single("picture"),register);
 // AUTH ROUTE
 app.use("/auth",require("./routes/authRoutes"));
 
-app.use("*",(req,res)=>{
-    res.status(404).json({message:"error"})
-})
+// USER ROUTE
+app.use("/users",require("./routes/userRoutes"));
+
+
+// app.use("*",(req,res)=>{
+//     res.status(404).json({message:"error 404"})
+// })
 
 
 
