@@ -8,10 +8,13 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const connectDb = require("./config/dbConn");
-const { register } = require("./controller/auth");
+const { register } = require("./controller/authRegister");
 const corsOptions = require("./config/corsOptions");
-const { users } = require("./data");
+const { users,posts } = require("./data");
 const Users = require("./models/Users");
+const verifyJWT = require("./middleware/authVerify");
+const {postUpload} = require("./controller/posts");
+const Posts = require("./models/Posts");
 const PORT = process.env.PORT || 3500;
 
 connectDb();
@@ -53,6 +56,8 @@ app.use("/",require("./routes/root"))
 // ROUTES WITH FILE UPLOAD
 app.post("/auth/register",upload.single("picture"),register);
 
+app.post("/postupload",verifyJWT,upload.single("picture"),postUpload);
+
 
 
 // AUTH ROUTE
@@ -61,6 +66,9 @@ app.use("/auth",require("./routes/authRoutes"));
 // USER ROUTE
 app.use("/users",require("./routes/userRoutes"));
 
+// POST ROUTE
+
+app.use("/posts",require("./routes/postRoutes"));
 
 // app.use("*",(req,res)=>{
 //     res.status(404).json({message:"error 404"})
