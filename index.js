@@ -25,10 +25,9 @@ const storage = multer.diskStorage({
       cb(null, path.join(__dirname,"public","assets"));
     },
     filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null, file.fieldname + '-' + uniqueSuffix+path.extname(file.originalname))
-    }
-  })
+      cb(null, file.originalname);
+  }}
+  )
   
 const upload = multer({ storage: storage })
 
@@ -43,7 +42,7 @@ app.use(morgan("common"));  //logger
 app.use(cors(corsOptions)); //for cross-origin
 
 app.use(express.json());
-app.use("/assests",express.static(path.join(__dirname,"/public/assests")))
+app.use("/assets",express.static(path.join(__dirname,"/public/assets")))
 
 
 

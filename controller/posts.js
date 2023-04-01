@@ -11,11 +11,11 @@ const postUpload = async (req, res, next) => {
       location,
       description,
       picturePath,
-      userPicturePath,
       likes,
       comments,
+      userPicturePath,
     } = req.body;
-    if (!userId || !firstName || !lastName || !picturePath || !userPicturePath)
+    if (!userId || !firstName || !lastName || !picturePath || !description || !userPicturePath)
       return res.status(400).json({ message: "All fields are required" });
     const user = await Users.findById(userId).lean().exec();
     if (!user) {
@@ -28,9 +28,9 @@ const postUpload = async (req, res, next) => {
       location,
       description,
       picturePath,
-      userPicturePath,
       likes,
       comments,
+      userPicturePath
     });
     if (!newPost) return res.status(400).json({ message: "Post not created" });
     res.status(201).json({ message: "Post created successfully" });
@@ -41,7 +41,7 @@ const postUpload = async (req, res, next) => {
 
 const getFeedPosts = async (req, res) => {
   try {
-    const feed = await Posts.find().sort({ createdAt: 1 }).lean().exec();
+    const feed = await Posts.find().sort({ createdAt: -1 }).lean().exec();
     res.status(200).json(feed);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -55,7 +55,7 @@ const getUserPosts = async (req, res) => {
       return res.status(400).json({ message: "userId required" });
     }
     const posts = await Posts.find({ userId: userId })
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .lean()
       .exec();
     res.status(200).json(posts);
@@ -66,8 +66,8 @@ const getUserPosts = async (req, res) => {
 
 const likePost = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { userId } = req.body;
+    const { id, userId } = req.params;
+    // const { us } = req.body;
     if (!id || !userId)
       return res
         .status(400)

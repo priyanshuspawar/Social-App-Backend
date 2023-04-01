@@ -32,7 +32,9 @@ const getUserFriends = async (req, res) => {
 
 const addRemoveFriend = async (req, res) => {
   try {
+
     const { id, friendId } = req.params;
+    if(id==friendId) return res.status(409).json({message: "friendId and user id is same"})
     const user = await Users.findById(id).select("-password").exec();
     const friend = await Users.findById(friendId).select("-password").exec();
     if (!user || !friend) {
@@ -53,8 +55,10 @@ const addRemoveFriend = async (req, res) => {
     );
 
     res.status(200).json(friendsArray);
-  } catch (error) {
+  } 
+  catch (error) {
     res.status(400).json({ message: error.message });
   }
-};
+
+}
 module.exports = { getUser, getUserFriends, addRemoveFriend };
