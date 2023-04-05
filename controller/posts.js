@@ -15,7 +15,14 @@ const postUpload = async (req, res, next) => {
       comments,
       userPicturePath,
     } = req.body;
-    if (!userId || !firstName || !lastName || !picturePath || !description || !userPicturePath)
+    if (
+      !userId ||
+      !firstName ||
+      !lastName ||
+      !picturePath ||
+      !description ||
+      !userPicturePath
+    )
       return res.status(400).json({ message: "All fields are required" });
     const user = await Users.findById(userId).lean().exec();
     if (!user) {
@@ -30,7 +37,7 @@ const postUpload = async (req, res, next) => {
       picturePath,
       likes,
       comments,
-      userPicturePath
+      userPicturePath,
     });
     if (!newPost) return res.status(400).json({ message: "Post not created" });
     res.status(201).json({ message: "Post created successfully" });
@@ -90,4 +97,35 @@ const likePost = async (req, res) => {
   }
 };
 
-module.exports = { postUpload, getFeedPosts, getUserPosts,likePost };
+const commentPost = async (req, res) => {
+  try {
+    const { id, userId } = req.params; // id of post and user id
+    const { comment: newComment } = req.body;
+    const post = await Posts.findById(id).exec();
+    const user = await Users.findById(userId).exec();
+    if (!user || !post || !newComment) {
+      return res
+        .status(404)
+        .json({ message: "user or post or comment(body) does not exist" });
+    }
+    post.comments.push({userId,body: newComment})
+    const updatedPost = await Posts.findById(id).exec();
+    updatedPost.comments = post.comments;
+    await updatedPost.save();
+    if (!updatedPost) {
+      return res.status(400).json({ message: "Not updated comments" });
+    }
+
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  postUpload,
+  getFeedPosts,
+  getUserPosts,
+  likePost,
+  commentPost,
+};

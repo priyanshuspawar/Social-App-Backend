@@ -2,6 +2,16 @@ const bcrypt = require("bcrypt");
 const Users = require("../models/Users");
 const jwt = require("jsonwebtoken");
 
+function capitalizeFirstLetter(str) {
+
+  const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
+
+  return capitalized;
+}
+
+
+
+
 const register = async (req, res, next) => {
   try {
     const {
@@ -31,13 +41,13 @@ const register = async (req, res, next) => {
     const hashedPwd = await bcrypt.hash(password, 10);
 
     const newUser = await Users.create({
-      firstName,
-      lastName,
-      email,
+      firstName:capitalizeFirstLetter(firstName),
+      lastName:capitalizeFirstLetter(lastName),
+      email:email.toLowerCase(),
       password: hashedPwd,
       friends,
-      occupation,
-      location,
+      occupation:capitalizeFirstLetter(occupation),
+      location:capitalizeFirstLetter(location),
       picturePath,
       viewedProfile: Math.random() * 10,
       impressions: Math.random() * 10,
@@ -62,11 +72,11 @@ const login = async (req, res, next) => {
     }
     const user = await Users.findOne({ email: email }).lean().exec();
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "User Not Found" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials. " });
+    if (!isMatch) return res.status(400).json({ msg: "Invalid Password. " });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     delete user.password;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const postSchema = mongoose.Schema(
   {
@@ -21,16 +21,22 @@ const postSchema = mongoose.Schema(
     likes: {
       type: Map,
       of: Boolean,
-      default:{},
+      default: {},
     },
-    comments: {
-      type: Array,
-      default: [],
-    },
+    comments: [
+      {
+        type: new mongoose.Schema({
+          userId: String,
+          body: String,
+        },
+        {timestamps:true}
+        ),
+      },
+    ],
   },
   { timestamps: true }
 );
 
 const Post = mongoose.model("Post", postSchema);
 
-module.exports=mongoose.model("Post", postSchema);
+module.exports = mongoose.model("Post", postSchema);

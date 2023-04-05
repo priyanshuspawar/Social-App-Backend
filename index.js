@@ -10,12 +10,10 @@ const morgan = require("morgan");
 const connectDb = require("./config/dbConn");
 const { register } = require("./controller/authRegister");
 const corsOptions = require("./config/corsOptions");
-const { users,posts } = require("./data");
-const Users = require("./models/Users");
 const verifyJWT = require("./middleware/authVerify");
 const {postUpload} = require("./controller/posts");
-const Posts = require("./models/Posts");
 const PORT = process.env.PORT || 3500;
+const compression = require("compression")
 
 connectDb();
 
@@ -35,6 +33,7 @@ const upload = multer({ storage: storage })
 
 const app = express();
 
+app.use(compression())
 // app.use(helmet()) //for assigning headers
 // app.use(helmet.crossOriginResourcePolicy); //for cross-origin resource policies
 app.use(morgan("common"));  //logger
