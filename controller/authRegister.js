@@ -70,7 +70,7 @@ const login = async (req, res, next) => {
     if (!email || !password) {
       return res.status(400).json({ message: "All fields must be provided" });
     }
-    const user = await Users.findOne({ email: email }).lean().exec();
+    const user = await Users.findOne({ email: email.toLowerCase() }).lean().exec();
     if (!user) {
       return res.status(400).json({ message: "User Not Found" });
     }
